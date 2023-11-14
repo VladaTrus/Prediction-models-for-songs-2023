@@ -569,7 +569,7 @@ def master_download(urls):
 	        item_type, item_id = parse_spotify_url(url)
 	        directory_name = get_item_name(sp, item_type, item_id)
 	        url_dict["save_path"] = Path(
-	            PurePath.joinpath(Path("/home/kiri/songs_downloaded"), Path(directory_name))
+	            PurePath.joinpath(Path(OUTPUT_DIR), Path(directory_name))
 	        )
 	        url_dict["save_path"].mkdir(parents=True, exist_ok=True)
 	        url_dict["songs"] = fetch_tracks(sp, item_type, item_id)
