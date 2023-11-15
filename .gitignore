@@ -6,5 +6,5 @@ configs
 **/configs
 SpotySongDownloader/configs
 SoundOfDownloader/configs
-.cache
-**/.cache
+\.cache
+**/\.cache
