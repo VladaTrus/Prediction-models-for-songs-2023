@@ -1,8 +1,8 @@
 
 # exclude configs
-configs
-**/configs
-SpotySongDownloader/configs
-SoundOfDownloader/configs
-\.cache
-**/\.cache
+configs/*
+SpotySongDownloader/configs/*
+SoundOfDownloader/configs/*
+SpotySongDownloader/.cache
+SoundOfDownloader/.cache
+.cache
