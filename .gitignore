@@ -8,3 +8,6 @@ SoundOfDownloader/configs/*
 SpotySongDownloader/.cache
 SoundOfDownloader/.cache
 .cache
+
+.vscode/
+.env
