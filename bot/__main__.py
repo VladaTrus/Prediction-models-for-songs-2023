@@ -10,7 +10,7 @@ bot = Bot(token=config.bot_token.get_secret_value())
 dp = Dispatcher()
 
 async def main():
-    dp.include_routers(questions.router, different_types.router, handlers.router)
+    dp.include_routers(questions.router, handlers.router) # different_types.router, 
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
