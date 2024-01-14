@@ -1,7 +1,7 @@
 import logging
 
 from aiogram import types, Router, F
-from aiogram.dispatcher.filters import Command
+from aiogram.filters import Command
 from aiogram.types import ParseMode, Message, ReplyKeyboardRemove
 
 logging.basicConfig(level=logging.INFO)
