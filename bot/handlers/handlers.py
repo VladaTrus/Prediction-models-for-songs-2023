@@ -6,11 +6,10 @@ from aiogram.dispatcher.filters import Command
 from aiogram.types import ParseMode, Message, ReplyKeyboardRemove
 
 logging.basicConfig(level=logging.INFO)
-dp.middleware.setup(LoggingMiddleware())
 
 router = Router()
 
-@router.message_handler(Command("start"))
+@router.message(Command("start"))
 async def cmd_start(message: types.Message):
     """
     Отправляет приветственное сообщение при команде /start
@@ -26,7 +25,7 @@ async def cmd_hello(message: Message):
         parse_mode=ParseMode.HTML
     )
 
-@router.message_handler(Command('help'))
+@router.message(Command('help'))
 async def on_help(message: types.Message):
     help_message = "Available commands:\n"
     help_message += "/start - Begin using the bot\n"
@@ -40,20 +39,20 @@ async def on_help(message: types.Message):
     await message.reply(help_message)
 
 
-@router.message_handler(Command("stats"))
+@router.message(Command("stats"))
 async def cmd_stats(message: types.Message):
     # You would replace the following with actual logic to retrieve stats
     stats_info = "Bot usage stats: ...\nAverage rating: ..."
     await message.answer(stats_info)
 
-@dp.inline_handler()
-async def inline_query(query: types.InlineQuery):
-    results = [types.InlineQueryResultArticle(
-        id='1',
-        title='Echo',
-        input_message_content=types.InputTextMessageContent(message_text=query.query)
-    )]
-    await bot.answer_inline_query(query.id, results, cache_time=0)
+# @dp.inline_handler()
+# async def inline_query(query: types.InlineQuery):
+#     results = [types.InlineQueryResultArticle(
+#         id='1',
+#         title='Echo',
+#         input_message_content=types.InputTextMessageContent(message_text=query.query)
+#     )]
+#     await bot.answer_inline_query(query.id, results, cache_time=0)
 
 # @dp.message_handler(Command('quiz'))
 # async def start_quiz(message: types.Message):
