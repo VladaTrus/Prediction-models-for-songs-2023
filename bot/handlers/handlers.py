@@ -1,38 +1,50 @@
 import logging
 
-from aiogram import types
-from bot.main import dp, bot
-
-from aiogram import types
+from aiogram import types, Router, F
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
-from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.dispatcher.filters import Command
 from aiogram.types import ParseMode, Message, ReplyKeyboardRemove
-from aiogram.utils import executor
 
 logging.basicConfig(level=logging.INFO)
 dp.middleware.setup(LoggingMiddleware())
 
-@dp.message_handler(Command("start"))
+router = Router()
+
+@router.message_handler(Command("start"))
 async def cmd_start(message: types.Message):
     """
     Отправляет приветственное сообщение при команде /start
     """
-    await message.answer("Привет, <b>{message.from_user.full_name}</b>! Я учебный бот для предсказания жанра песни. Посмотри, что я умею",
+    await message.answer(f"Привет, <b>{message.from_user.full_name}</b>! Я учебный бот для предсказания жанра песни. Посмотри, что я умею",
                          parse_mode=ParseMode.HTML)
 
 
-@dp.message(Command("hello"))
+@router.message(Command("hello"))
 async def cmd_hello(message: Message):
     await message.answer(
         f"Hello, <b>{message.from_user.full_name}</b>",
         parse_mode=ParseMode.HTML
     )
 
-@dp.message_handler(Command('help'))
+@router.message_handler(Command('help'))
 async def on_help(message: types.Message):
-    await message.reply("Набери /start , чтобы начать и /help если нужна помощь")
+    help_message = "Available commands:\n"
+    help_message += "/start - Begin using the bot\n"
+    help_message += "/help - Get assistance\n"
+    help_message += "/stats - View bot statistics\n"
+    help_message += "/predict - Make a single prediction\n"
+    help_message += "/predict_multiple - Make multiple predictions\n"
+    help_message += "/review - Provide a review\n"
+    help_message += "/suggestions - List available commands\n"
 
+    await message.reply(help_message)
+
+
+@router.message_handler(Command("stats"))
+async def cmd_stats(message: types.Message):
+    # You would replace the following with actual logic to retrieve stats
+    stats_info = "Bot usage stats: ...\nAverage rating: ..."
+    await message.answer(stats_info)
 
 @dp.inline_handler()
 async def inline_query(query: types.InlineQuery):
