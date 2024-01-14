@@ -1,7 +1,6 @@
 import logging
 
 from aiogram import types, Router, F
-from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.dispatcher.filters import Command
 from aiogram.types import ParseMode, Message, ReplyKeyboardRemove
 
