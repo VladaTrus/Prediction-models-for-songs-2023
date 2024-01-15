@@ -6,12 +6,26 @@ from dateutil.parser import parse
 from sklearn.preprocessing import LabelEncoder
 import os
 import shutil
+import sys
+import subprocess
 
 def eda_spotify_features():
     if os.path.exists('../spotify_features_data/'):
         shutil.rmtree('../spotify_features_data/')
+    
+    def pull_data_with_dvc():
+    	cmd = [sys.executable, "-m", "dvc", "pull"]
+    	result = subprocess.run(cmd, capture_output=True, text=True)
+    	if result.returncode == 0:
+        	st.write("Data pulled successfully!")
+        	st.write(result.stdout)
+   	    else:
+        	st.write("Error pulling data!")
+        	st.write(result.stderr)
 
-    os.system("dvc pull")
+    # Use this function somewhere in your Streamlit app.
+    pull_data_with_dvc()
+    # os.system("dvc pull")
 
     df = pd.read_csv('../spotify_features_data/spotify_features_data.csv')
     
