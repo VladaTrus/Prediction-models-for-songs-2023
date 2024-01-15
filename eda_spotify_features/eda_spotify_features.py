@@ -14,14 +14,14 @@ def eda_spotify_features():
         shutil.rmtree('../spotify_features_data/')
     
     def pull_data_with_dvc():
-    	cmd = [sys.executable, "-m", "dvc", "pull"]
-    	result = subprocess.run(cmd, capture_output=True, text=True)
-    	if result.returncode == 0:
-        	st.write("Data pulled successfully!")
-        	st.write(result.stdout)
-   	    else:
-        	st.write("Error pulling data!")
-        	st.write(result.stderr)
+        cmd = [sys.executable, "-m", "dvc", "pull"]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode == 0:
+            st.write("Data pulled successfully!")
+            st.write(result.stdout)
+        else:
+            st.write("Error pulling data!")
+            st.write(result.stderr)
 
     # Use this function somewhere in your Streamlit app.
     pull_data_with_dvc()
