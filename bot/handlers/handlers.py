@@ -26,7 +26,7 @@ exit_phrase = "Чтобы вернуться в главное меню, наж�
 async def start_handler(message: Message):
     await message.answer("Привет, <b>{message.from_user.full_name}</b>! Я учебный бот для предсказания жанра песни. Посмотри, что я умею",
                          parse_mode=ParseMode.HTML, 
-                         reply_markup=menu)
+                         reply_markup=menu_kb)
 
 @router.message(F.text == "Меню")
 @router.message(F.text == "Выйти в меню")
