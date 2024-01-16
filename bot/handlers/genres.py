@@ -23,7 +23,7 @@ async def send_random_songs_by_genre(message: types.Message, genre: str, num_son
 
         await message.reply('\n'.join(song_list), reply=False)
 
-@router.message(commands=['genre'])
+@router.message(commands='genre')
 async def genre_command(message: types.Message):
     await message.reply('Введите жанр:', reply=False)
 
