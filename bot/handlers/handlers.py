@@ -58,7 +58,7 @@ class AllStates(StatesGroup):
     # waiting_for_review = FSMContext(storage="memory") 
     waiting_for_review = State() 
 
-@router.callback_query(lambda query: query.data == "review")
+@router.callback_query(F.data == "review")
 async def get_review(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.answer(
         "Оставьте свой отзыв об использовании бота. Что понравилось и чего не хватило в функционале?"
@@ -66,7 +66,7 @@ async def get_review(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(AllStates.waiting_for_review)
 
 # Обработчик текстового сообщения при ожидании отзыва
-@router.message(state=AllStates.waiting_for_review)
+@router.message(AllStates.waiting_for_review)
 async def save_review(message: Message, state: FSMContext):
     review = message.text
     reviews.append(review)
