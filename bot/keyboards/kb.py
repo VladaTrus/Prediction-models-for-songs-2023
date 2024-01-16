@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 menu = [
     [InlineKeyboardButton(text="📝 Оставить отзыв", callback_data="review"),
-    InlineKeyboardButton(text="🖼 Сгенерировать подборку песен по жанру", callback_data="genre")],
+    InlineKeyboardButton(text="🖼 Сгенерировать подборку песен по жанру", callback_data="genre_playlist")],
     [InlineKeyboardButton(text="💳 Предсказать жанр песни", callback_data="predict"),
     InlineKeyboardButton(text="Посмотреть статистику бота", callback_data="stats")],
     [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
