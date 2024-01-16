@@ -42,7 +42,7 @@ async def handle_number(message: types.Message, state: FSMContext):
         await message.reply('Произошла ошибка при обработке вашего запроса')
 
 
-@router.message(lambda message: not message.text.isdigit(), state="*")
+@router.message(lambda message: not message.text.isdigit())
 async def handle_text(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         if 'selected_genre' in data:
