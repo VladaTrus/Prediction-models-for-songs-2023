@@ -28,7 +28,7 @@ async def send_random_songs_by_genre(message: types.Message, genre: str, num_son
 async def genre_command(message: types.Message):
     await message.reply('Введите жанр:', reply=False)
 
-@router.message(lambda message: message.text.isdigit(), state="*")
+@router.message(lambda message: message.text.isdigit())
 async def handle_number(message: types.Message, state: FSMContext):
     try:
         user_id = message.from_user.id
@@ -40,6 +40,7 @@ async def handle_number(message: types.Message, state: FSMContext):
             await state.update_data(selected_genre=genre)
     except Exception as e:
         await message.reply('Произошла ошибка при обработке вашего запроса')
+
 
 @router.message(lambda message: not message.text.isdigit(), state="*")
 async def handle_text(message: types.Message, state: FSMContext):
