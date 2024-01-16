@@ -6,7 +6,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram.types.callback_query import CallbackQuery
-from aiogram.filters.state import State, StatesGroup
+from aiogram.fsm.state import State, StatesGroup
 from keyboards.kb import menu_kb, exit_kb, iexit_kb
 from keyboards.for_questions import get_yes_no_kb
 import pandas as pd
@@ -52,10 +52,9 @@ async def get_stats(clbck: CallbackQuery, message: types.Message):
     await clbck.message.answer(exit_phrase, reply_markup=exit_kb)
 
 # review
-# review
 reviews = []
 
-class ReviewState(StatesGroup):
+class AllStates(StatesGroup):
     # waiting_for_review = FSMContext(storage="memory") 
     waiting_for_review = State() 
 
@@ -64,10 +63,10 @@ async def get_review(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.answer(
         "Оставьте свой отзыв об использовании бота. Что понравилось и чего не хватило в функционале?"
     )
-    await state.set(ReviewState.waiting_for_review)
+    await state.set_state(AllStates.waiting_for_review)
 
 # Обработчик текстового сообщения при ожидании отзыва
-@router.message(state=ReviewState.waiting_for_review)
+@router.message(state=AllStates.waiting_for_review)
 async def save_review(message: Message, state: FSMContext):
     review = message.text
     reviews.append(review)
