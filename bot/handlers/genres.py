@@ -1,5 +1,6 @@
 from aiogram import types, Router
 from aiogram.fsm.context import FSMContext
+from aiogram.filters import Command
 import pandas as pd
 import random
 
@@ -23,7 +24,7 @@ async def send_random_songs_by_genre(message: types.Message, genre: str, num_son
 
         await message.reply('\n'.join(song_list), reply=False)
 
-@router.message(commands='genre')
+@router.message(Command('genre'))
 async def genre_command(message: types.Message):
     await message.reply('Введите жанр:', reply=False)
 
