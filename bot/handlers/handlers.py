@@ -6,6 +6,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram.types.callback_query import CallbackQuery
+from aiogram.filters.state import State, StatesGroup
 from keyboards.kb import menu_kb, exit_kb, iexit_kb
 from keyboards.for_questions import get_yes_no_kb
 import pandas as pd
@@ -51,12 +52,45 @@ async def get_stats(clbck: CallbackQuery, message: types.Message):
     await clbck.message.answer(exit_phrase, reply_markup=exit_kb)
 
 # review
+# review
+reviews = []
 
-@router.message(Command("/review"))
-async def get_review(message: Message):
-    await message.answer(
-        "Спасибо за отзыв!"
+class ReviewState(StatesGroup):
+    # waiting_for_review = FSMContext(storage="memory") 
+    waiting_for_review = State() 
+
+@router.callback_query(lambda query: query.data == "review")
+async def get_review(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.message.answer(
+        "Оставьте свой отзыв об использовании бота. Что понравилось и чего не хватило в функционале?"
     )
+    await state.set(ReviewState.waiting_for_review)
+
+# Обработчик текстового сообщения при ожидании отзыва
+@router.message(state=ReviewState.waiting_for_review)
+async def save_review(message: Message, state: FSMContext):
+    review = message.text
+    reviews.append(review)
+
+    # Сохраняем отзывы в файл
+    with open("reviews.txt", "a", encoding="utf-8") as file:
+        file.write(review + "\n")
+
+    await message.answer("Спасибо за ваш отзыв!", reply_markup=exit_kb)
+    await state.finish()
+
+# /get_reviews
+@router.message(Command("/get_reviews"))
+async def get_reviews(message: Message):
+    try:
+        with open("reviews.txt", "r", encoding="utf-8") as file:
+            saved_reviews = file.readlines()
+        if saved_reviews:
+            await message.answer("Вот недавние отзывы:\n\n" + "".join(saved_reviews))
+        else:
+            await message.answer("Пока нет отзывов")
+    except FileNotFoundError:
+        await message.answer("Пока нет отзывов")
 
 # genre
     
@@ -105,7 +139,7 @@ async def handle_text(message: types.Message, state: FSMContext):
                 num_songs = int(message.text)
                 await send_random_songs_by_genre(message, genre, num_songs)
             except ValueError:
-                await message.reply('Пожалуйста, введите число')
+                await message.reply('Пожалуйста, введите число больше 0')
         else:
             await message.reply('Пожалуйста, выберите жанр сначала')
 
