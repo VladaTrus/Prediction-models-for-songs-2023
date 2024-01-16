@@ -3,47 +3,48 @@ import logging
 from aiogram import types, Router, F
 from aiogram.filters import Command
 from aiogram.enums import ParseMode
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message
+from aiogram.types.callback_query import CallbackQuery
+from keyboards.kb import menu_kb, exit_kb, iexit_kb
 
 logging.basicConfig(level=logging.INFO)
 
 router = Router()
 
+command_descriptions = {
+    '/start': 'Начать диалог с ботом',
+    '/genre': 'Выбрать жанр и желаемое количество треков для подборки',
+    '/predict': 'Определить жанр песни по характеристикам (csv-файл)',
+    '/review': 'Оставить отзыв на бота',
+    '/stats': 'Посмотреть количество ...',
+    '/lyrics': 'Найти текст песни (в разработке)'
+}
+
+exit_phrase = "Чтобы вернуться в главное меню, нажмите кнопку ниже:"
+
 @router.message(Command("start"))
-async def cmd_start(message: types.Message):
-    """
-    Отправляет приветственное сообщение при команде /start
-    """
-    await message.answer(f"Привет, <b>{message.from_user.full_name}</b>! Я учебный бот для предсказания жанра песни. Посмотри, что я умею",
-                         parse_mode=ParseMode.HTML)
+async def start_handler(message: Message):
+    await message.answer("Привет, <b>{message.from_user.full_name}</b>! Я учебный бот для предсказания жанра песни. Посмотри, что я умею",
+                         parse_mode=ParseMode.HTML, 
+                         reply_markup=menu)
 
+@router.message(F.text == "Меню")
+@router.message(F.text == "Выйти в меню")
+@router.message(F.text == "◀️ Выйти в меню")
+async def menu(msg: Message):
+    await msg.answer("Главное меню:", reply_markup=menu_kb)
 
-@router.message(Command("hello"))
-async def cmd_hello(message: Message):
-    await message.answer(
-        f"Hello, <b>{message.from_user.full_name}</b>",
-        parse_mode=ParseMode.HTML
-    )
-
-@router.message(Command('help'))
-async def on_help(message: types.Message):
-    help_message = "Available commands:\n"
-    help_message += "/start - Begin using the bot\n"
-    help_message += "/help - Get assistance\n"
-    help_message += "/stats - View bot statistics\n"
-    help_message += "/predict - Make a single prediction\n"
-    help_message += "/predict_multiple - Make multiple predictions\n"
-    help_message += "/review - Provide a review\n"
-    help_message += "/suggestions - List available commands\n"
-
-    await message.reply(help_message)
-
+@router.message(lambda message: message.text.startswith('/'))
+async def show_command_hints(clbck: CallbackQuery, message: types.Message):
+    command_hints = '\n'.join([f"{command}: {description}" for command, description in command_descriptions.items()])
+    await message.reply(f'Доступные команды:\n{command_hints}', reply=False)
+    await clbck.message.answer(exit_phrase, reply_markup=exit_kb)
 
 @router.message(Command("stats"))
-async def cmd_stats(message: types.Message):
-    # You would replace the following with actual logic to retrieve stats
+async def cmd_stats(clbck: CallbackQuery, message: types.Message):
     stats_info = "Bot usage stats: ...\nAverage rating: ..."
     await message.answer(stats_info)
+    await clbck.message.answer(exit_phrase, reply_markup=exit_kb)
 
 # @dp.inline_handler()
 # async def inline_query(query: types.InlineQuery):
@@ -53,19 +54,3 @@ async def cmd_stats(message: types.Message):
 #         input_message_content=types.InputTextMessageContent(message_text=query.query)
 #     )]
 #     await bot.answer_inline_query(query.id, results, cache_time=0)
-
-# @dp.message_handler(Command('quiz'))
-# async def start_quiz(message: types.Message):
-#     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
-#     item1 = types.KeyboardButton("Да")
-#     item2 = types.KeyboardButton("Нет")
-#     markup.add(item1, item2)
-#     await message.answer("Довольны ли полученным результатом?", reply_markup=markup)
-#     await QuizState.question.set()
-
-# @dp.message_handler(lambda message: message.text in ["Option A", "Option B"], state=QuizState.question)
-# async def answer_question(message: types.Message, state: FSMContext):
-#     async with state.proxy() as data:
-#         data['answer'] = message.text
-#     await message.reply(f"You selected: {message.text}. Thanks for participating!")
-#     await state.finish()

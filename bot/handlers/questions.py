@@ -1,13 +1,18 @@
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.types import Message, ReplyKeyboardRemove
-
 from keyboards.for_questions import get_yes_no_kb
 
 router = Router()
 
+@router.message(Command("/review"))
+async def get_review(message: Message):
+    await message.answer(
+        "Спасибо за отзыв!"
+    )
+
 @router.message(Command("/survey"))
-async def cmd_start(message: Message):
+async def survey(message: Message):
     await message.answer(
         "Вы довольны результатом предсказания модели?",
         reply_markup=get_yes_no_kb()
