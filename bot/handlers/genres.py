@@ -55,3 +55,12 @@ async def handle_text(message: types.Message, state: FSMContext):
         else:
             await message.reply('Пожалуйста, выберите жанр сначала')
 
+# @router.callback_query(lambda query: query.data == "review")
+# async def process_review_callback(query: CallbackQuery):
+# await query.answer()
+# await get_review(query.message)
+
+# @router.callback_query(lambda query: query.data == "genre")
+# async def process_genre_callback(query: CallbackQuery):
+# await query.answer()
+# await genre_command(query.message)

@@ -5,12 +5,6 @@ from keyboards.for_questions import get_yes_no_kb
 
 router = Router()
 
-@router.message(Command("/review"))
-async def get_review(message: Message):
-    await message.answer(
-        "Спасибо за отзыв!"
-    )
-
 @router.message(Command("/survey"))
 async def survey(message: Message):
     await message.answer(
