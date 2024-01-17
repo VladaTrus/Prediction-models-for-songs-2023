@@ -94,7 +94,7 @@ async def genre_playlist(message: types.Message):
     await message.answer('Введите жанр:')
     await AllStates.waiting_for_genre.set()
 
-@router.message(state=AllStates.waiting_for_genre)
+@router.message(AllStates.waiting_for_genre)
 async def process_genre(message: types.Message, state: FSMContext):
     genre_input = message.text.lower()
     genre_songs = df[df['genre'].str.lower() == genre_input]
