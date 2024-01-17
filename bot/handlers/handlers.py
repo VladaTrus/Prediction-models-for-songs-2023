@@ -20,7 +20,7 @@ command_descriptions = {
     '/genre': 'Выбрать жанр и желаемое количество треков для подборки',
     '/predict': 'Определить жанр песни по характеристикам (csv-файл)',
     '/review': 'Оставить отзыв на бота',
-    '/stats': 'Посмотреть количество ...',
+    '/stats': 'Посмотреть содержание данных',
     '/lyrics': 'Найти текст песни (в разработке)'
 }
 
@@ -47,7 +47,7 @@ async def menu(msg: Message):
     
 @router.callback_query(Command("stats"))
 async def get_stats( message: types.Message):
-    stats_info = "Bot usage stats: ...\nAverage rating: ..."
+    stats_info = f"Количество песен: {df.shape[0]}\n Количество жанров: {df['genre'].nunique()}/n"
     await message.answer(stats_info)
     # await clbck.message.answer(exit_phrase, reply_markup=exit_kb)
 
@@ -88,7 +88,7 @@ async def get_reviews(message: Message):
 
 # genre
     
-df = pd.read_csv('../train.csv')
+df = pd.read_csv('train.csv')
 
 # async def send_random_songs_by_genre(message: types.Message, genre: str, num_songs: int):
 #     genre_songs = df[df['genre'].str.lower() == genre]
