@@ -88,9 +88,7 @@ async def get_reviews(message: Message):
 
 # genre
     
-df = pd.DataFrame({'genre': ['pop', 'rap', 'hop', 'rap', 'pop'], 
-                   'artist': ['Lana', 'Mana', 'Zhana', 'Hanna', 'Moana'], 
-                   'title': ['pu', 'pupu', 'pupupu', 'pupupupu', 'pupup']})
+df = pd.read_csv('../train.csv')
 
 # async def send_random_songs_by_genre(message: types.Message, genre: str, num_songs: int):
 #     genre_songs = df[df['genre'].str.lower() == genre]
@@ -128,8 +126,7 @@ async def process_number(message: types.Message, state: FSMContext):
         num_songs = int(message.text)
         if num_songs <= 0:
             raise ValueError
-        user_data = await state.get_data()
-        genre = user_data['selected_genre']
+        genre = await state.get_data()
         await send_random_songs_by_genre(message, genre, num_songs)
         await state.finish()
     except ValueError:
