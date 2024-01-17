@@ -21,7 +21,6 @@ command_descriptions = {
     '/predict': 'Определить жанр песни по характеристикам (csv-файл)',
     '/review': 'Оставить отзыв на бота',
     '/stats': 'Посмотреть содержание данных',
-    '/lyrics': 'Найти текст песни (в разработке)'
 }
 
 exit_phrase = "Чтобы вернуться в главное меню, нажмите кнопку ниже:"
@@ -44,10 +43,9 @@ async def menu(msg: Message):
     await msg.answer("Главное меню:", reply_markup=menu_kb)
 
 # stats
-    
 @router.callback_query(Command("stats"))
 async def get_stats( message: types.Message):
-    stats_info = f"Количество песен: {df.shape[0]}\n Количество жанров: {df['genre'].nunique()}/n"
+    stats_info = f"Количество песен: {df.shape[0]}\nКоличество жанров: {df['genre'].nunique()}\nКоличество артистов: {df['artist'].nunique()}"
     await message.answer(stats_info)
     # await clbck.message.answer(exit_phrase, reply_markup=exit_kb)
 
@@ -55,10 +53,9 @@ async def get_stats( message: types.Message):
 reviews = []
 
 class AllStates(StatesGroup):
-    # waiting_for_review = FSMContext(storage="memory") 
     waiting_for_review = State() 
-    genre = State()
-    number_of_songs = State()
+    waiting_for_genre = State()
+    waiting_for_number_of_songs = State()
 
 # Обработчик текстового сообщения при ожидании отзыва
 @router.message(AllStates.waiting_for_review)
@@ -92,12 +89,75 @@ df = pd.DataFrame({'genre': ['pop', 'rap', 'hop', 'rap', 'pop'],
                    'artist': ['Lana', 'Mana', 'Zhana', 'Hanna', 'Moana'], 
                    'title_name': ['pu', 'pupu', 'pupupu', 'pupupupu', 'pupup']})
 
+@router.message(Command('genre_playlist'))
+async def genre_playlist(message: types.Message):
+    await message.answer('Введите жанр:')
+    await AllStates.waiting_for_genre.set()
+
+@router.message(state=AllStates.waiting_for_genre)
+async def process_genre(message: types.Message, state: FSMContext):
+    genre_input = message.text.lower()
+    genre_songs = df[df['genre'].str.lower() == genre_input]
+
+    if len(genre_songs) == 0:
+        await message.reply(f'Извините, нет песен в жанре "{genre_input}". Попробуйте другой жанр.')
+    else:
+        await state.update_data(genre=genre_input)
+        await message.reply('Введите количество песен (число больше 0):')
+        await AllStates.waiting_for_number_of_songs.set()
+
+@router.message(AllStates.waiting_for_number_of_songs)
+async def process_number(message: types.Message, state: FSMContext):
+    if not message.text.isdigit():
+        await message.reply('Пожалуйста, введите число больше 0')
+        return
+
+    num_songs = int(message.text)
+    if num_songs <= 0:
+        await message.reply('Число должно быть больше 0. Пожалуйста, попробуйте снова:')
+        return
+
+    user_data = await state.get_data()
+    genre = user_data['genre']
+    await send_random_songs_by_genre(message, genre, num_songs)
+    await state.finish()
+
+async def send_random_songs_by_genre(message: types.Message, genre: str, num_songs: int):
+    genre_songs = df[df['genre'].str.lower() == genre]
+    random_songs = genre_songs.sample(min(num_songs, len(genre_songs)))
+    song_list = [f"{song['artist']} -- {song['title']}" for _, song in random_songs.iterrows()]
+    await message.reply('\n'.join(song_list), reply=False)
+
+# @router.message(Command('genre_playlist'))
+# async def genre_playlist(message: types.Message):
+#     await message.answer(f'Сначала введите жанр. Например,  {" ".join(df["genre"].unique()[:3])}')
+#     await AllStates.genre.set()
+
+# @router.message(lambda message: message.text.lower() in df['genre'].str.lower().unique(), AllStates.genre)
+# async def process_genre(message: types.Message, state: FSMContext):
+#     genre_input = message.text.lower()
+#     await state.update_data()
+#     await message.reply('Сколько песен хотите получить? Введите число больше 0')
+#     await AllStates.number_of_songs.set()
+
+# @router.message(lambda message: not message.text.isdigit(), AllStates.number_of_songs)
+# async def handle_invalid_number(message: types.Message):
+#     await message.reply('Пожалуйста, введите число больше 0')
+
+# @router.message(lambda message: message.text.isdigit(), AllStates.number_of_songs)
+# async def process_number(message: types.Message, state: FSMContext):
+#     try:
+#         num_songs = int(message.text)
+#         if num_songs <= 0:
+#             raise ValueError
+#         genre = await state.get_data()
+#         await send_random_songs_by_genre(message, genre, num_songs)
+#         await state.finish()
+#     except ValueError:
+#         await message.reply('Пожалуйста, введите число больше 0')
 
 # async def send_random_songs_by_genre(message: types.Message, genre: str, num_songs: int):
-#     genre_songs = df[df['genre'].str.lower() == genre]
 
-#     if len(genre_songs) == 0:
-#         await message.reply(f'Извините, нет песен в жанре "{genre}"')
 #     else:
 #         random_songs = genre_songs.sample(min(num_songs, len(genre_songs)))
 #         song_list = []
@@ -106,48 +166,6 @@ df = pd.DataFrame({'genre': ['pop', 'rap', 'hop', 'rap', 'pop'],
 #             song_list.append(song_info)
 
 #         await message.reply('\n'.join(song_list), reply=False)
-
-@router.message(Command('genre_playlist'))
-async def genre_playlist(message: types.Message):
-    await message.answer(f'Сначала введите жанр. Например, {df["genre"].unique()[:3]}')
-    await AllStates.genre.set()
-
-@router.message(lambda message: message.text.lower() in df['genre'].str.lower().unique(), AllStates.genre)
-async def process_genre(message: types.Message, state: FSMContext):
-    genre_input = message.text.lower()
-    await state.update_data(selected_genre=genre_input)
-    await message.reply('Сколько песен хотите получить? Введите число больше 0')
-    await AllStates.number_of_songs.set()
-
-@router.message(lambda message: not message.text.isdigit(), AllStates.number_of_songs)
-async def handle_invalid_number(message: types.Message):
-    await message.reply('Пожалуйста, введите число больше 0')
-
-@router.message(lambda message: message.text.isdigit(), AllStates.number_of_songs)
-async def process_number(message: types.Message, state: FSMContext):
-    try:
-        num_songs = int(message.text)
-        if num_songs <= 0:
-            raise ValueError
-        genre = await state.get_data()
-        await send_random_songs_by_genre(message, genre, num_songs)
-        await state.finish()
-    except ValueError:
-        await message.reply('Пожалуйста, введите число больше 0')
-
-async def send_random_songs_by_genre(message: types.Message, genre: str, num_songs: int):
-    genre_songs = df[df['genre'].str.lower() == genre]
-
-    if len(genre_songs) == 0:
-        await message.reply(f'Извините, нет песен в жанре "{genre}"')
-    else:
-        random_songs = genre_songs.sample(min(num_songs, len(genre_songs)))
-        song_list = []
-        for _, song in random_songs.iterrows():
-            song_info = f"{song['artist']} -- {song['title']}\n"
-            song_list.append(song_info)
-
-        await message.reply('\n'.join(song_list), reply=False)
 
 # @router.message(Command('genre_playlist'))
 # async def genre_playlist(message: types.Message):
@@ -206,6 +224,9 @@ async def send_random_songs_by_genre(message: types.Message, genre: str, num_son
 
 @router.message(Command("/predict"))
 async def predict_genre(message: Message):
+    # my_object = MyBinaryIO()
+#     await 
+# MyBinaryIO = await bot.download_file(file_path, my_object)
     await message.answer(
         "Предсказание для вашей песни:"
     )
@@ -236,6 +257,7 @@ async def answer_no(message: Message):
 async def show_command_hints(message: types.Message):
     command_hints = '\n'.join([f"{command}: {description}" for command, description in command_descriptions.items()])
     await message.answer(command_hints)
+    await message.answer('Чтобы вернуться в главное меню введите "Меню"')
     await message.answer(exit_phrase, reply_markup=exit_kb)
 
 # menu
