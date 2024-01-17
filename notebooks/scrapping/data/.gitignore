@@ -1,0 +1,7 @@
+big_genres_bulk/*
+big_genres_tracks_analysis/*
+interim/*
+small_genres_tracks_analysis/*
+*.json
+*.pickle
+*.csv
