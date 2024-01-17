@@ -6,3 +6,7 @@ SoundOfDownloader/configs/*
 SpotySongDownloader/.cache
 SoundOfDownloader/.cache
 .cache
+
+/spotify_features_data
+.DS_Store
+
