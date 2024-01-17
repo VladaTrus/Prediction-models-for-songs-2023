@@ -1,5 +1,8 @@
 [core]
-    remote = myremote
+    remote = kiri_remote
 ['remote "myremote"']
     url = gdrive://11WmpqyFepTAajcStTw-SPwBOdBISrJo9
+    gdrive_acknowledge_abuse = true
+['remote "kiri_remote"']
+    url = gdrive://16cSIiJAbMkkzUsYs4zzSipJnOHMpmtWu
     gdrive_acknowledge_abuse = true
