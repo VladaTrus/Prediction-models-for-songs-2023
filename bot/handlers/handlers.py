@@ -88,7 +88,7 @@ async def get_reviews(message: Message):
 
 # genre
     
-df = pd.read_csv('train.csv')
+df = pd.read_csv('data/train.csv')
 
 # async def send_random_songs_by_genre(message: types.Message, genre: str, num_songs: int):
 #     genre_songs = df[df['genre'].str.lower() == genre]
