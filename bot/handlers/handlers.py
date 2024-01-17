@@ -86,9 +86,12 @@ async def get_reviews(message: Message):
     except FileNotFoundError:
         await message.answer("Пока нет отзывов")
 
-# genre
-    
-df = pd.read_csv('data/train.csv')
+# genre    
+# df = pd.read_csv('bot/data/train.csv')
+df = pd.DataFrame({'genre': ['pop', 'rap', 'hop', 'rap', 'pop'], 
+                   'artist': ['Lana', 'Mana', 'Zhana', 'Hanna', 'Moana'], 
+                   'title_name': ['pu', 'pupu', 'pupupu', 'pupupupu', 'pupup']})
+
 
 # async def send_random_songs_by_genre(message: types.Message, genre: str, num_songs: int):
 #     genre_songs = df[df['genre'].str.lower() == genre]
