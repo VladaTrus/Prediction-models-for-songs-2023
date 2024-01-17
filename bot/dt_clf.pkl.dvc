@@ -1,0 +1,5 @@
+outs:
+- md5: ad45bc9374ea32e696fa767d2691f187
+  size: 22971289
+  hash: md5
+  path: dt_clf.pkl

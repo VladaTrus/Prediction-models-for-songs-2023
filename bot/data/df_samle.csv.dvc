@@ -1,0 +1,5 @@
+outs:
+- md5: 887a35a6369e79b8e9c7c8033fbb6f23
+  size: 1474
+  hash: md5
+  path: df_samle.csv
