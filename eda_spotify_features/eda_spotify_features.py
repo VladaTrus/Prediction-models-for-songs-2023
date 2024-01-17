@@ -195,5 +195,81 @@ def eda_spotify_features():
     # plt.ylabel(f1)
     # st.pyplot(f)
 
+    st.title('Разведочный анализ данных по текстам песен')
+    DATA_PATH = '../spotify_features_data_temp'
+    st.write('''
+        На данный момент удалось достать 51280 треков. Из них 44641 и 6639 треков на английском и других языках.
+        
+        В дальнейшем работать будем только с английскими треками, а в разведочном анализе сравним характеристика по всем текстам
+        ''')
+    
+    st.header('Распределение признака words_per_second')
+
+    st.subheader('Треки на английском языке')
+    st.image(f'{DATA_PATH}/distrib_eng.png', use_column_width='always')
+    st.subheader('Треки на других языках')
+    st.image(f'{DATA_PATH}/distrib_oth.png', use_column_width='always')
+
+    st.write('''
+        Распределение признака практически совпадает для текстов на разных языках
+        ''')
+
+    st.header('Самые "быстрые" и "медленные" жанры')
+    st.write('''
+        Оценка скорости жанров проводилась по принципу количество слов в тексте на секунду трека
+        ''')
+    st.subheader('Треки на английском языке')
+    st.image(f'{DATA_PATH}/fastest_eng.png', use_column_width='always')
+    st.subheader('Треки на других языках')
+    st.image(f'{DATA_PATH}/fastest_oth.png', use_column_width='always')
+    st.write('''
+        Среди наиболее быстрых жанров в случае английских текстов можно выделить trap_cristiano, 
+             который почти в три раза обгоняет ближайшего соседа. 
+        В медленных жанров количество слов на секунду не превышает 0,01 слова в секунду. 
+             Это могут быть почти инструментальные треки или даже жанры
+    ''')
+
+    st.header('По количеству слов в тексте')
+    st.write('''
+             Найдем жанры, выделяющиеся по количеству используемых слов в абсолютном значении
+    ''')
+    st.subheader('Треки на английском языке')
+    st.image(f'{DATA_PATH}/most_least_words_eng.png', use_column_width='always')
+    st.subheader('Треки на других языках')
+    st.image(f'{DATA_PATH}/most_least_oth.png', use_column_width='always')
+    st.write('''
+            В треках на английском опять же выделается trap_cristiano, 
+             а наименьшее число слов содержится во многих инструментальных жанрах
+            В других языках подвиды hip hop'a занимают большую часть топа с большим числом слов, 
+             а indie - с маленьким. Также по сравнению с английскими треками значение на порядок ниже (30 против 4)
+    ''')
+
+    st.header('Облаков слов')
+    st.subheader('Треки на английском языке')
+    st.image(f'{DATA_PATH}/Word_Cloud_eng.png')
+    st.subheader('Треки на других языках')
+    st.image(f'{DATA_PATH}/Word_Cloud_other.png')
+    st.write('''
+        В английских текстах песен чаще всего употребляются слова [know, love, got, yeah], 
+             на облаке остальных языков можно заметить слова из испанского, немецкого и французских языков 
+    ''')
+
+    st.header('Артисты с наибольшим и наименьшим разнообразием слов')
+    st.write('''
+    Подсчет по среднему значению уникальных слов по артисту. Если в песне содержатся фиты, 
+                песня отдельно учитывалась для каждого артиста
+    ''')
+    st.subheader('Артисты с наибольшим разнообразием слов')
+    st.subheader('Треки на английском языке')
+    st.image(f'{DATA_PATH}/most_unique_eng.png')
+    st.subheader('Треки на других языках')
+    st.image(f'{DATA_PATH}/most_unique_oth.png')
+    st.subheader('Артисты с наименьшим разнообразием слов')
+    st.subheader('Треки на английском языке') 
+    st.image(f'{DATA_PATH}/least_unique_eng.png')
+    st.subheader('Треки на других языках')
+    st.image(f'{DATA_PATH}/least_unique_oth.png') 
+     
+
 if __name__ == "__main__":
     eda_spotify_features()
