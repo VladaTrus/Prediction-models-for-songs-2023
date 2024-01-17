@@ -122,7 +122,7 @@ async def process_genre(message: types.Message, state: FSMContext):
 async def handle_invalid_number(message: types.Message):
     await message.reply('Пожалуйста, введите число больше 0')
 
-@router.message(lambda message: message.text.isdigit(), state=AllStates.number_of_songs)
+@router.message(lambda message: message.text.isdigit(), AllStates.number_of_songs)
 async def process_number(message: types.Message, state: FSMContext):
     try:
         num_songs = int(message.text)
